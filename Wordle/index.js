@@ -57,7 +57,6 @@ function registerKeyboardEvents() {
                     if (word === state.secret) {
                         setTimeout(() => {
                             alert('Congratulations!');
-                            // restartGame();
                         }, 1500);
                         return;
                     }
@@ -144,6 +143,26 @@ function restartGame() {
     console.log(`New Secret Word: ${state.secret}`);
 }
 
+// "Start Game" 버튼을 누르면 "Restart Game" 버튼 활성화, "Start Game" 버튼은 비활성화
+function handleStartGame() {
+    startup();
+
+    const startButton = document.getElementById('start-btn');
+    const restartButton = document.getElementById('restart-btn');
+
+    if (startButton) {
+        startButton.disabled = true; // Start 버튼 비활성화
+        startButton.style.opacity = "0.5";
+        startButton.style.cursor = "not-allowed";
+    }
+
+    if (restartButton) {
+        restartButton.disabled = false; // Restart 버튼 활성화
+        restartButton.style.opacity = "1";
+        restartButton.style.cursor = "pointer";
+    }
+}
+
 function startup() {
     const game = document.getElementById('game');
 
@@ -154,6 +173,11 @@ function startup() {
     console.log(`Secret Word: ${state.secret}`);
 }
 
-// 버튼 이벤트 추가
-document.getElementById('start-btn').addEventListener('click', startup);
+
+document.getElementById('start-btn').addEventListener('click', handleStartGame);
 document.getElementById('restart-btn').addEventListener('click', restartGame);
+
+// "Restart Game" 버튼을 초기 비활성화 상태로 설정
+document.getElementById('restart-btn').disabled = true;
+document.getElementById('restart-btn').style.opacity = "0.5";
+document.getElementById('restart-btn').style.cursor = "not-allowed";
