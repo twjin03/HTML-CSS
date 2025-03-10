@@ -146,7 +146,9 @@ function registerVirtualKeyboardEvents() {
                     }
                 }
             } else if (key === 'backspace') {
-                removeLetter();
+                if (state.currentCol > 0) {  
+                    removeLetter();
+                }
             } else if (isLetter(key)) {
                 addLetter(key);
             }
@@ -155,6 +157,7 @@ function registerVirtualKeyboardEvents() {
         });
     });
 }
+
 
 function getCurrentWord() {
     return state.grid[state.currentRow].join('');
