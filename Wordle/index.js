@@ -13,7 +13,32 @@ function updateGrid() {
         for (let j = 0; j < state.grid[i].length; j++) {
             const box = document.getElementById(`box${i}${j}`);
             if (box) {
-                box.textContent = state.grid[i][j];
+                box.textContent = state.grid[i][j] || '';
+            }
+        }
+    }
+}
+
+function updateKeyboardColors() {
+    const guessedLetters = {};
+    
+    for (let i = 0; i < state.currentRow; i++) {
+        for (let j = 0; j < 5; j++) {
+            const letter = state.grid[i][j];
+            if (!letter) continue;
+            
+            const key = document.querySelector(`.key[data-key="${letter}"]`);
+            if (!key) continue;
+
+            if (state.secret[j] === letter) {
+                key.classList.add('right');
+                guessedLetters[letter] = 'right';
+            } else if (state.secret.includes(letter) && guessedLetters[letter] !== 'right') {
+                key.classList.add('wrong');
+                guessedLetters[letter] = 'wrong';
+            } else if (!state.secret.includes(letter) && !guessedLetters[letter]) {
+                key.classList.add('empty');
+                guessedLetters[letter] = 'empty';
             }
         }
     }
@@ -153,6 +178,7 @@ function revealWord(guess) {
             } else {
                 box.classList.add('empty');
             }
+            updateKeyboardColors();
         }, ((i + 1) * animation_duration) / 2);
 
         box.classList.add('animated');
@@ -183,10 +209,16 @@ function restartGame() {
     state.currentCol = 0;
     state.gameStarted = true;
 
+    document.querySelectorAll('.key').forEach(key => {
+        key.classList.remove('right', 'wrong', 'empty');
+    });
+
     const game = document.getElementById('game');
     game.innerHTML = '';
     drawGrid(game);
     updateGrid();
+    registerKeyboardEvents();
+    registerVirtualKeyboardEvents();
 
     console.log(`New Secret Word: ${state.secret}`);
 }
@@ -205,7 +237,7 @@ function handleStartGame() {
     }
 
     if (restartButton) {
-        restartButton.disabled = false; // Restart 버튼 활성화
+        restartButton.disabled = false;
         restartButton.style.opacity = "1";
         restartButton.style.cursor = "pointer";
     }
@@ -223,8 +255,6 @@ function startup() {
 
 document.getElementById('start-btn').addEventListener('click', handleStartGame);
 document.getElementById('restart-btn').addEventListener('click', restartGame);
-
-// "Restart Game" 버튼을 초기 비활성화 상태로 설정
 document.getElementById('restart-btn').disabled = true;
 document.getElementById('restart-btn').style.opacity = "0.5";
 document.getElementById('restart-btn').style.cursor = "not-allowed";
