@@ -53,7 +53,7 @@ function registerKeyboardEvents() {
                     revealWord(word);
                     state.currentRow++;
                     state.currentCol = 0;
-                    
+
                     if (word === state.secret) {
                         setTimeout(() => {
                             alert('Congratulations!');
@@ -141,7 +141,7 @@ function restartGame() {
     drawGrid(game);
     updateGrid();
 
-    console.log(`Secret Word: ${state.secret}`);
+    console.log(`New Secret Word: ${state.secret}`);
 }
 
 function startup() {
@@ -154,4 +154,6 @@ function startup() {
     console.log(`Secret Word: ${state.secret}`);
 }
 
-startup();
+// 버튼 이벤트 추가
+document.getElementById('start-btn').addEventListener('click', startup);
+document.getElementById('restart-btn').addEventListener('click', restartGame);
