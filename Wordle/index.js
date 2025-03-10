@@ -13,18 +13,18 @@ function updateGrid() {
     for (let i = 0; i < state.grid.length; i++) {
         for (let j = 0; j < state.grid[i].length; j++) {
             const box = document.getElementById(`box${i}${j}`);
-            box.textContent = state.grid[i][j];
+            if (box) {
+                box.textContent = state.grid[i][j];
+            }
         }
     }
 }
-
 
 function drawBox(container, row, col, letter = '') {
     const box = document.createElement('div');
     box.className = 'box';
     box.id = `box${row}${col}`;
     box.textContent = letter;
-
     container.appendChild(box);
     return box;
 }
@@ -40,13 +40,13 @@ function drawGrid(container) {
     }
 
     container.appendChild(grid);
-
 }
 
 function registerKeyboardEvents() {
     document.body.onkeydown = (e) => {
-        const key = e.key;
-        if (key === 'Enter') {
+        const key = e.key.toLowerCase();
+
+        if (key === 'enter') {
             if (state.currentCol === 5) {
                 const word = getCurrentWord();
                 if (isWordValid(word)) {
@@ -57,26 +57,22 @@ function registerKeyboardEvents() {
                     alert('Invalid Word!');
                 }
             }
-        }
-        if (key === 'Backspace') {
-
-        }
-        if (isLetter(key)) {
-
+        } else if (key === 'backspace') {
+            removeLetter();
+        } else if (isLetter(key)) {
+            addLetter(key);
         }
 
         updateGrid();
     };
 }
 
-
 function getCurrentWord() {
-    return state.grid[state.currentRow].reduce((prev, curr) => prev + curr);
+    return state.grid[state.currentRow].join('');
 }
 
 function isWordValid(word) {
     return dictionary.includes(word);
-
 }
 
 function revealWord(guess) {
@@ -117,8 +113,8 @@ function addLetter(letter) {
 
 function removeLetter() {
     if (state.currentCol === 0) return;
-    state.grid[state.currentRow][state.currentCol - 1] = '';
     state.currentCol--;
+    state.grid[state.currentRow][state.currentCol] = '';
 }
 
 function startup() {
@@ -126,11 +122,9 @@ function startup() {
 
     game.innerHTML = '';
     drawGrid(game);
-
     registerKeyboardEvents();
 
-    console.log(state.secret);
-
+    console.log(`Secret Word: ${state.secret}`);
 }
 
 startup();
