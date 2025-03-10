@@ -53,6 +53,22 @@ function registerKeyboardEvents() {
                     revealWord(word);
                     state.currentRow++;
                     state.currentCol = 0;
+                    
+                    if (word === state.secret) {
+                        setTimeout(() => {
+                            alert('Congratulations!');
+                            // restartGame();
+                        }, 1500);
+                        return;
+                    }
+
+                    if (state.currentRow === 6) {
+                        setTimeout(() => {
+                            alert(`Try again! The word was ${state.secret}`);
+                            restartGame();
+                        }, 1500);
+                        return;
+                    }
                 } else {
                     alert('Invalid Word!');
                 }
@@ -93,22 +109,9 @@ function revealWord(guess) {
             }
         }, ((i + 1) * animation_duration) / 2);
 
-
-
         box.classList.add('animated');
         box.style.animationDelay = `${(i * animation_duration) / 2}ms`;
     }
-
-    const isWinner = state.secret === guess;
-    const isGameOver = state.currentRow === 5;
-
-    setTimeout(() => {
-        if (isWinner) {
-            alert('Congratulations!');
-        } else if (isGameOver) {
-            alert(`Try again! The word was ${state.secret}`);
-        }
-    }, 3 * animation_duration);
 }
 
 function isLetter(key) {
@@ -125,6 +128,20 @@ function removeLetter() {
     if (state.currentCol === 0) return;
     state.currentCol--;
     state.grid[state.currentRow][state.currentCol] = '';
+}
+
+function restartGame() {
+    state.secret = dictionary[Math.floor(Math.random() * dictionary.length)];
+    state.grid = Array(6).fill().map(() => Array(5).fill(''));
+    state.currentRow = 0;
+    state.currentCol = 0;
+
+    const game = document.getElementById('game');
+    game.innerHTML = '';
+    drawGrid(game);
+    updateGrid();
+
+    console.log(`Secret Word: ${state.secret}`);
 }
 
 function startup() {
