@@ -1,6 +1,12 @@
 html,
 body {
     background: var(--default);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
 }
 
 :root {
@@ -14,7 +20,7 @@ body {
     display: grid;
     place-items: center;
     width: 100%;
-    height: 600px;
+    height: 400px;
 }
 
 .grid {
@@ -36,6 +42,7 @@ body {
     font-size: 2.4rem;
 }
 
+/* Word Grid 스타일 */
 .box.empty {
     background: var(--empty);
 }
@@ -52,20 +59,56 @@ body {
     animation: flip 0.5s ease;
 }
 
-@keyframes flip {
-    0% {
-        transform: scaleY(1);
-    }
-
-    50% {
-        transform: scaleY(0);
-    }
-
-    100% {
-        transform: scaleY(1);
-    }
+/* 가상 키보드 스타일 */
+.keyboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
 }
 
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+}
+
+.key {
+    width: 40px;
+    height: 50px;
+    margin: 5px;
+    font-size: 18px;
+    text-transform: uppercase;
+    background: var(--empty);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+.key:hover {
+    background: #555;
+}
+
+
+.key.empty {
+    background: var(--empty);
+}
+
+.key.wrong {
+    background: var(--wrong);
+}
+
+.key.right {
+    background: var(--right);
+}
+
+
+.special-key {
+    width: 80px;
+}
+
+/* 버튼 스타일 */
 #button-container {
     display: flex;
     justify-content: center;
@@ -91,4 +134,17 @@ button:hover {
 button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+/* 애니메이션 효과 */
+@keyframes flip {
+    0% {
+        transform: scaleY(1);
+    }
+    50% {
+        transform: scaleY(0);
+    }
+    100% {
+        transform: scaleY(1);
+    }
 }

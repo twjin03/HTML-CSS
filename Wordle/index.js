@@ -2,11 +2,10 @@ const dictionary = ['earth', 'plane', 'crane', 'audio', 'house'];
 
 const state = {
     secret: dictionary[Math.floor(Math.random() * dictionary.length)],
-    grid: Array(6)
-        .fill()
-        .map(() => Array(5).fill('')),
+    grid: Array(6).fill().map(() => Array(5).fill('')),
     currentRow: 0,
     currentCol: 0,
+    gameStarted: false
 };
 
 function updateGrid() {
@@ -44,6 +43,8 @@ function drawGrid(container) {
 
 function registerKeyboardEvents() {
     document.body.onkeydown = (e) => {
+        if (!state.gameStarted) return;
+        
         const key = e.key.toLowerCase();
 
         if (key === 'enter') {
@@ -57,6 +58,7 @@ function registerKeyboardEvents() {
                     if (word === state.secret) {
                         setTimeout(() => {
                             alert('Congratulations!');
+                            // restartGame();
                         }, 1500);
                         return;
                     }
@@ -80,6 +82,51 @@ function registerKeyboardEvents() {
 
         updateGrid();
     };
+}
+
+function registerVirtualKeyboardEvents() {
+    document.querySelectorAll('.key').forEach(button => {
+        button.addEventListener('click', () => {
+            if (!state.gameStarted) return;
+            
+            const key = button.getAttribute('data-key');
+
+            if (key === 'enter') {
+                if (state.currentCol === 5) {
+                    const word = getCurrentWord();
+                    if (isWordValid(word)) {
+                        revealWord(word);
+                        state.currentRow++;
+                        state.currentCol = 0;
+
+                        if (word === state.secret) {
+                            setTimeout(() => {
+                                alert('Congratulations!');
+                                restartGame();
+                            }, 1500);
+                            return;
+                        }
+
+                        if (state.currentRow === 6) {
+                            setTimeout(() => {
+                                alert(`Try again! The word was ${state.secret}`);
+                                restartGame();
+                            }, 1500);
+                            return;
+                        }
+                    } else {
+                        alert('Invalid Word!');
+                    }
+                }
+            } else if (key === 'backspace') {
+                removeLetter();
+            } else if (isLetter(key)) {
+                addLetter(key);
+            }
+
+            updateGrid();
+        });
+    });
 }
 
 function getCurrentWord() {
@@ -134,6 +181,7 @@ function restartGame() {
     state.grid = Array(6).fill().map(() => Array(5).fill(''));
     state.currentRow = 0;
     state.currentCol = 0;
+    state.gameStarted = true;
 
     const game = document.getElementById('game');
     game.innerHTML = '';
@@ -143,15 +191,15 @@ function restartGame() {
     console.log(`New Secret Word: ${state.secret}`);
 }
 
-// "Start Game" 버튼을 누르면 "Restart Game" 버튼 활성화, "Start Game" 버튼은 비활성화
 function handleStartGame() {
+    state.gameStarted = true;
     startup();
 
     const startButton = document.getElementById('start-btn');
     const restartButton = document.getElementById('restart-btn');
 
     if (startButton) {
-        startButton.disabled = true; // Start 버튼 비활성화
+        startButton.disabled = true;
         startButton.style.opacity = "0.5";
         startButton.style.cursor = "not-allowed";
     }
@@ -165,14 +213,13 @@ function handleStartGame() {
 
 function startup() {
     const game = document.getElementById('game');
-
     game.innerHTML = '';
     drawGrid(game);
     registerKeyboardEvents();
+    registerVirtualKeyboardEvents();
 
     console.log(`Secret Word: ${state.secret}`);
 }
-
 
 document.getElementById('start-btn').addEventListener('click', handleStartGame);
 document.getElementById('restart-btn').addEventListener('click', restartGame);
