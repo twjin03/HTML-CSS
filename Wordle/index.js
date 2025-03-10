@@ -1,4 +1,4 @@
-const dictionary = ['earth', 'plane', 'crane', 'audio', 'house'];
+import { dictionary } from "./words.js";
 
 const state = {
     secret: dictionary[Math.floor(Math.random() * dictionary.length)],
@@ -102,7 +102,9 @@ function registerKeyboardEvents() {
                 }
             }
         } else if (key === 'backspace') {
-            removeLetter();
+            if (state.currentCol > 0) {  
+                removeLetter();
+            }
         } else if (isLetter(key)) {
             addLetter(key);
         }
