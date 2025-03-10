@@ -83,7 +83,8 @@ function registerKeyboardEvents() {
                     if (word === state.secret) {
                         setTimeout(() => {
                             alert('Congratulations!');
-                            // restartGame();
+                            restartGame();
+                            // 정답일 경우 재시작
                         }, 1500);
                         return;
                     }
@@ -92,6 +93,7 @@ function registerKeyboardEvents() {
                         setTimeout(() => {
                             alert(`Try again! The word was ${state.secret}`);
                             restartGame();
+                            // 6번 시도 후 실패 시 재시작 
                         }, 1500);
                         return;
                     }
