@@ -15,15 +15,7 @@
         <button id="start-btn">Start Game</button> 
         <button id="restart-btn">Restart Game</button>
     </div>
-    <div id="game">
-        <!-- <div class="grid">
-            <div class="box"></div>
-            <div class="box"></div>
-            <div class="box"></div>
-            <div class="box"></div>
-            <div class="box"></div>
-        </div> -->
-    </div>
+    <div id="game"></div>
 
     <div id="keyboard" class="keyboard">
         <div class="keyboard-row">
@@ -62,60 +54,6 @@
         </div>
     </div>
     <script src="index.js" type='module'></script>
-
-    <!-- <style>
-        input {
-            width: 50px;
-            height: 50px;
-            font-size: 40px;
-            text-align: center;
-        }
-    </style>
-
-    <input type="text" class="input">
-    <input type="text" class="input">
-    <input type="text" class="input">
-    <input type="text" class="input">
-    <input type="text" class="input">
-    <button>제출</button>
-
-    <script>
-        // 정답 하드코딩
-        var answer = 'ready';
-        document.querySelector('button').addEventListener('click',
-            function () {
-                var input = document.querySelectorAll('.input');
-
-                for (let i = 0; i < 5; i++) {
-                    // 초록 
-                    if (input[i].value == answer[i]) {
-                        input[i].style.background = 'green';
-                    }
-                    // 노랑 
-                    else if (answer.includes(input[i].value)) {
-                        input[i].style.background = 'yellow';
-                    }
-                    // 회색
-                    else {
-                        input[i].style.background = 'lightgrey';
-                    }
-
-                    input[i].classList.remove('input');
-                }
-
-                var template = `<div>
-                        <input type="text" class="input">
-                        <input type="text" class="input">
-                        <input type="text" class="input">
-                        <input type="text" class="input">
-                        <input type="text" class="input">
-                </div>`;
-                document.querySelector('body').insertAdjacentHTML
-                    ('beforeend', template);
-            })
-    </script> -->
-
-
 </body>
 
 </html>
