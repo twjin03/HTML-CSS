@@ -82,7 +82,10 @@ function handleInput(key) {
 
     if (key === "enter") {
         if (state.currentCol === 5) checkWord();
-        else showFloatingDialog("Not enough letters", 2000);
+        else setTimeout(() => {
+            showFloatingDialog("Not enough letters.", 2000);
+            triggerRowShake(state.currentRow);
+        }, 100);
     } else if (key === "backspace") {
         removeLetter();
     } else if (isLetter(key)) {
@@ -91,15 +94,60 @@ function handleInput(key) {
     updateGrid();
 }
 
+function triggerRowShake(rowIndex) {
+    const rowTiles = document.querySelectorAll(`[id^="box${rowIndex}"]`); // ✅ row의 모든 타일 선택
+
+    if (!rowTiles.length) return;
+
+    rowTiles.forEach(tile => {
+        tile.classList.add("shake");
+    });
+
+    setTimeout(() => {
+        rowTiles.forEach(tile => tile.classList.remove("shake"));
+    }, 300); 
+}
+
+
+
+
+
+function triggerRowJump(rowIndex) {
+    const delay = 40;
+
+    for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+            const box = document.getElementById(`box${rowIndex}${i}`);
+            box.classList.add("jump");
+            box.style.animationDelay = `${i * delay}ms`;
+
+        }, i * delay);
+    }
+}
+
+
+
 function checkWord() {
     const word = state.grid[state.currentRow].join("");
-    if (!dictionary.includes(word)) return showFloatingDialog("Invalid Word!", 2000);
+    if (!dictionary.includes(word)) {
+        setTimeout(() => {
+            showFloatingDialog("Invalid Word!", 2000);
+            triggerRowShake(state.currentRow);
+        }, 100);
+        return;
+    }
 
     revealWord();
     state.currentRow++;
     state.currentCol = 0;
 
-    if (word === state.secret) return setTimeout(() => showFloatingDialog("Congratulations!🎉", 3000), 1500);
+    if (word === state.secret) {
+        setTimeout(() => {
+            showFloatingDialog("Congratulations!🎉", 3000);
+            triggerRowJump(state.currentRow - 1);
+        }, 1500);
+        return;
+    }
     if (state.currentRow === 6) {
         setTimeout(() => startGame(), 1500);
         return setTimeout(() => showFloatingDialog(`Try again!<br>The word was 👉${state.secret.toUpperCase()}👈`, 3000), 1500);
@@ -107,7 +155,7 @@ function checkWord() {
 
 }
 
-function revealWord(guess) {
+function revealWord() {
     const row = state.currentRow;
     const animation_duration = 500;
 
