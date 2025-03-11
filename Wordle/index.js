@@ -63,12 +63,26 @@ function updateKeyboardColors() {
     }
 }
 
+function showFloatingDialog(message, dialog_duration) {
+    const container = document.getElementById("floating-dialog-container");
+    const dialog = document.createElement("div");
+    dialog.className = "floating-dialog";
+    dialog.innerHTML = message;
+    container.appendChild(dialog);
+
+    dialog.style.animation = `fadeOut ${dialog_duration / 1000}s ease-in-out forwards`;
+
+    setTimeout(() => {
+        dialog.remove();
+    }, dialog_duration);
+}
+
 function handleInput(key) {
     if (!state.gameStarted) return;
 
     if (key === "enter") {
         if (state.currentCol === 5) checkWord();
-        else alert("Not enough letters.");
+        else showFloatingDialog("Not enough letters", 2000);
     } else if (key === "backspace") {
         removeLetter();
     } else if (isLetter(key)) {
@@ -79,17 +93,21 @@ function handleInput(key) {
 
 function checkWord() {
     const word = state.grid[state.currentRow].join("");
-    if (!dictionary.includes(word)) return alert("Invalid Word!");
+    if (!dictionary.includes(word)) return showFloatingDialog("Invalid Word!", 2000);
 
     revealWord();
     state.currentRow++;
     state.currentCol = 0;
 
-    if (word === state.secret) return setTimeout(() => alert("Congratulations!"), 1500);
-    if (state.currentRow === 6) return setTimeout(() => alert(`Try again! The word was ${state.secret}`), 1500);
+    if (word === state.secret) return setTimeout(() => showFloatingDialog("Congratulations!🎉", 3000), 1500);
+    if (state.currentRow === 6) {
+        setTimeout(() => startGame(), 1500);
+        return setTimeout(() => showFloatingDialog(`Try again!<br>The word was 👉${state.secret.toUpperCase()}👈`, 3000), 1500);
+    }
+
 }
 
-function revealWord() {
+function revealWord(guess) {
     const row = state.currentRow;
     const animation_duration = 500;
 
@@ -108,7 +126,7 @@ function revealWord() {
             updateKeyboardColors();
         }, ((i + 1) * animation_duration) / 2);
 
-        box.classList.add('animated');
+        box.classList.add('flip');
         box.style.animationDelay = `${(i * animation_duration) / 2}ms`;
     }
 }
@@ -120,6 +138,14 @@ function isLetter(key) {
 function addLetter(letter) {
     if (state.currentCol === 5) return;
     state.grid[state.currentRow][state.currentCol] = letter;
+    const box = document.getElementById(`box${state.currentRow}${state.currentCol}`);
+    box.textContent = letter;
+    box.classList.add("pop");
+
+    setTimeout(() => {
+        box.classList.remove("pop");
+    }, 200);
+
     state.currentCol++;
 }
 
@@ -149,17 +175,10 @@ function startGame() {
     const startButton = document.getElementById("start-btn");
     startButton.textContent = "Restart Game";
     startButton.style.backgroundColor = "#b59f3b";
-    // startButton.style.color = "white";
-    // startButton.style.padding = "10px 20px";
-    // startButton.style.fontSize = "16px";
-    // startButton.style.border = "none";
-    // startButton.style.borderRadius = "5px";
-    // startButton.style.cursor = "pointer";
     startButton.style.transition = "background 0.3s";
 
     startButton.onmouseover = () => startButton.style.backgroundColor = "#87762c";
     startButton.onmouseout = () => startButton.style.backgroundColor = "#b59f3b";
-
 
     console.log(`Secret Word: ${state.secret}`);
 }
