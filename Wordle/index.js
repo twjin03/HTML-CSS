@@ -1,70 +1,132 @@
 import { dictionary } from "./words.js";
 
+// const state = {
+//     secret: dictionary[Math.floor(Math.random() * dictionary.length)],
+//     grid: Array(6).fill().map(() => Array(5).fill('')),
+//     currentRow: 0,
+//     currentCol: 0,
+//     gameStarted: false
+// };
 const state = {
-    secret: dictionary[Math.floor(Math.random() * dictionary.length)],
-    grid: Array(6).fill().map(() => Array(5).fill('')),
+    secret: "",
+    grid: [],
     currentRow: 0,
     currentCol: 0,
     gameStarted: false
 };
 
-function updateGrid() {
-    for (let i = 0; i < state.grid.length; i++) {
-        for (let j = 0; j < state.grid[i].length; j++) {
-            const box = document.getElementById(`box${i}${j}`);
-            if (box) {
-                box.textContent = state.grid[i][j] || '';
-            }
-        }
-    }
+function initState() {
+    state.secret = dictionary[Math.floor(Math.random() * dictionary.length)];
+    state.grid = Array.from({ length: 6 }, () => Array(5).fill(''));
+    state.currentRow = 0;
+    state.currentCol = 0;
+    state.gameStarted = true;
 }
 
-function updateKeyboardColors() {
-    const guessedLetters = {};
-    
-    for (let i = 0; i < state.currentRow; i++) {
-        for (let j = 0; j < 5; j++) {
-            const letter = state.grid[i][j];
-            if (!letter) continue;
-            
-            const key = document.querySelector(`.key[data-key="${letter}"]`);
-            if (!key) continue;
-
-            if (state.secret[j] === letter) {
-                key.classList.add('right');
-                guessedLetters[letter] = 'right';
-            } else if (state.secret.includes(letter) && guessedLetters[letter] !== 'right') {
-                key.classList.add('wrong');
-                guessedLetters[letter] = 'wrong';
-            } else if (!state.secret.includes(letter) && !guessedLetters[letter]) {
-                key.classList.add('empty');
-                guessedLetters[letter] = 'empty';
-            }
-        }
-    }
-}
-
-function drawBox(container, row, col, letter = '') {
-    const box = document.createElement('div');
-    box.className = 'box';
-    box.id = `box${row}${col}`;
-    box.textContent = letter;
-    container.appendChild(box);
-    return box;
-}
-
-function drawGrid(container) {
-    const grid = document.createElement('div');
-    grid.className = 'grid';
+function drawGrid() {
+    const container = document.getElementById("game");
+    container.innerHTML = "";
+    const grid = document.createElement("div");
+    grid.className = "grid";
+    container.appendChild(grid);
 
     for (let i = 0; i < 6; i++) {
         for (let j = 0; j < 5; j++) {
-            drawBox(grid, i, j);
+            const box = document.createElement("div");
+            box.className = "box";
+            box.id = `box${i}${j}`;
+            grid.appendChild(box);
         }
     }
-
-    container.appendChild(grid);
 }
+
+// function updateGrid() {
+//     for (let i = 0; i < state.grid.length; i++) {
+//         for (let j = 0; j < state.grid[i].length; j++) {
+//             const box = document.getElementById(`box${i}${j}`);
+//             if (box) {
+//                 box.textContent = state.grid[i][j] || '';
+//             }
+//         }
+//     }
+// }
+
+// function updateKeyboardColors() {
+//     const guessedLetters = {};
+    
+//     for (let i = 0; i < state.currentRow; i++) {
+//         for (let j = 0; j < 5; j++) {
+//             const letter = state.grid[i][j];
+//             if (!letter) continue;
+            
+//             const key = document.querySelector(`.key[data-key="${letter}"]`);
+//             if (!key) continue;
+
+//             if (state.secret[j] === letter) {
+//                 key.classList.add('right');
+//                 guessedLetters[letter] = 'right';
+//             } else if (state.secret.includes(letter) && guessedLetters[letter] !== 'right') {
+//                 key.classList.add('wrong');
+//                 guessedLetters[letter] = 'wrong';
+//             } else if (!state.secret.includes(letter) && !guessedLetters[letter]) {
+//                 key.classList.add('empty');
+//                 guessedLetters[letter] = 'empty';
+//             }
+//         }
+//     }
+// }
+function updateGrid() {
+    state.grid.forEach((row, i) => {
+        row.forEach((letter, j) => {
+            document.getElementById(`box${i}${j}`).textContent = letter;
+        });
+    });
+}
+
+function updateKeyboardColors() {
+    document.querySelectorAll(".key").forEach(key => key.classList.remove("right", "wrong", "empty"));
+    const guessedLetters = {};
+
+    for (let i = 0; i < state.currentRow; i++) {
+        state.grid[i].forEach((letter, j) => {
+            const key = document.querySelector(`.key[data-key="${letter}"]`);
+            if (!key) return;
+            
+            if (state.secret[j] === letter) {
+                key.classList.add("right");
+                guessedLetters[letter] = "right";
+            } else if (state.secret.includes(letter) && guessedLetters[letter] !== "right") {
+                key.classList.add("wrong");
+                guessedLetters[letter] = "wrong";
+            } else {
+                key.classList.add("empty");
+            }
+        });
+    }
+}
+
+
+// function drawBox(container, row, col, letter = '') {
+//     const box = document.createElement('div');
+//     box.className = 'box';
+//     box.id = `box${row}${col}`;
+//     box.textContent = letter;
+//     container.appendChild(box);
+//     return box;
+// }
+
+// function drawGrid(container) {
+//     const grid = document.createElement('div');
+//     grid.className = 'grid';
+
+//     for (let i = 0; i < 6; i++) {
+//         for (let j = 0; j < 5; j++) {
+//             drawBox(grid, i, j);
+//         }
+//     }
+
+//     container.appendChild(grid);
+// }
 
 function registerKeyboardEvents() {
     document.body.onkeydown = (e) => {
@@ -116,6 +178,10 @@ function registerKeyboardEvents() {
 }
 
 function registerVirtualKeyboardEvents() {
+    document.querySelectorAll('.key').forEach(button => {
+        button.replaceWith(button.cloneNode(true)); // 기존 이벤트 리스너 제거
+    });
+
     document.querySelectorAll('.key').forEach(button => {
         button.addEventListener('click', () => {
             if (!state.gameStarted) return;
