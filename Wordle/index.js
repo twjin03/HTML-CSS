@@ -230,8 +230,6 @@ function startGame() {
     drawGrid();
     resetKeyboard();
 
-    document.querySelector('.keyboard').classList.add('visible');
-
     const startButton = document.getElementById("start-btn");
     startButton.textContent = "Restart Game";
     startButton.style.backgroundColor = "#b59f3b";
