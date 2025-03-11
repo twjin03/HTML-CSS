@@ -63,8 +63,6 @@ function updateKeyboardColors() {
     }
 }
 
-
-
 function handleInput(key) {
     if (!state.gameStarted) return;
 
@@ -91,7 +89,7 @@ function checkWord() {
     if (state.currentRow === 6) return setTimeout(() => alert(`Try again! The word was ${state.secret}`), 1500);
 }
 
-function revealWord(guess) {
+function revealWord() {
     const row = state.currentRow;
     const animation_duration = 500;
 
@@ -134,9 +132,9 @@ function removeLetter() {
 function registerEvents() {
     document.body.onkeydown = (e) => handleInput(e.key.toLowerCase());
     document.querySelectorAll(".key").forEach(button => {
-        button.addEventListener("click", () => handleInput(button.dataset.key));
+        button.addEventListener("mousedown", () => handleInput(button.dataset.key));
     });
-    document.getElementById("start-btn").addEventListener("click", startGame);
+    document.getElementById("start-btn").addEventListener("mousedown", startGame);
 }
 
 function resetKeyboard() {
@@ -147,6 +145,22 @@ function startGame() {
     initState();
     drawGrid();
     resetKeyboard();
+
+    const startButton = document.getElementById("start-btn");
+    startButton.textContent = "Restart Game";
+    startButton.style.backgroundColor = "#b59f3b";
+    // startButton.style.color = "white";
+    // startButton.style.padding = "10px 20px";
+    // startButton.style.fontSize = "16px";
+    // startButton.style.border = "none";
+    // startButton.style.borderRadius = "5px";
+    // startButton.style.cursor = "pointer";
+    startButton.style.transition = "background 0.3s";
+
+    startButton.onmouseover = () => startButton.style.backgroundColor = "#87762c";
+    startButton.onmouseout = () => startButton.style.backgroundColor = "#b59f3b";
+
+
     console.log(`Secret Word: ${state.secret}`);
 }
 

@@ -93,6 +93,9 @@ body {
     border-radius: 5px;
     cursor: pointer;
     transition: background 0.3s ease-in-out;
+
+    outline: none;
+    box-shadow: none;
 }
 
 .key:hover {
@@ -134,6 +137,9 @@ button {
     cursor: pointer;
     border-radius: 5px;
     transition: background 0.3s;
+
+    outline: none;
+    box-shadow: none;
 }
 
 button:hover {
