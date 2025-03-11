@@ -80,6 +80,9 @@ function showFloatingDialog(message, dialog_duration) {
 function handleInput(key) {
     if (!state.gameStarted) return;
 
+    // 단축키 사용 시 무시 
+    if (event && (event.ctrlKey || event.altKey || event.metaKey)) return;
+
     if (key === "enter") {
         if (state.currentCol === 5) checkWord();
         else setTimeout(() => {
@@ -95,7 +98,7 @@ function handleInput(key) {
 }
 
 function triggerRowShake(rowIndex) {
-    const rowTiles = document.querySelectorAll(`[id^="box${rowIndex}"]`); // ✅ row의 모든 타일 선택
+    const rowTiles = document.querySelectorAll(`[id^="box${rowIndex}"]`); 
 
     if (!rowTiles.length) return;
 
@@ -146,11 +149,13 @@ function checkWord() {
             showFloatingDialog("Congratulations!🎉", 3000);
             triggerRowJump(state.currentRow - 1);
         }, 1500);
+        state.gameStarted = false;
         return;
     }
     if (state.currentRow === 6) {
-        setTimeout(() => startGame(), 1500);
-        return setTimeout(() => showFloatingDialog(`Try again!<br>The word was 👉${state.secret.toUpperCase()}👈`, 3000), 1500);
+        setTimeout(() => showFloatingDialog(`Try again!😥<br>The answer was 👉${state.secret.toUpperCase()}👈`, 5000), 1500);
+        setTimeout(() => startGame(), 2000);
+        return;
     }
 
 }
@@ -204,7 +209,12 @@ function removeLetter() {
 }
 
 function registerEvents() {
-    document.body.onkeydown = (e) => handleInput(e.key.toLowerCase());
+    document.body.onkeydown = (e) => {
+        // 단축키 
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+        handleInput(e.key.toLowerCase(), e);
+    };
     document.querySelectorAll(".key").forEach(button => {
         button.addEventListener("mousedown", () => handleInput(button.dataset.key));
     });
