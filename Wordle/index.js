@@ -66,65 +66,99 @@ function drawGrid(container) {
     container.appendChild(grid);
 }
 
-function handleKeyPress(key) {
-    if (!state.gameStarted) return;
-
-    if (key === 'enter') {
-        if (state.currentCol === 5) {
-            const word = getCurrentWord();
-            if (isWordValid(word)) {
-                revealWord(word);
-                state.currentRow++;
-                state.currentCol = 0;
-
-                if (word === state.secret) {
-                    setTimeout(() => {
-                        alert('Congratulations!');
-                        restartGame();
-                    }, 1500);
-                    return;
-                }
-
-                if (state.currentRow === 6) {
-                    setTimeout(() => {
-                        alert(`Try again! The word was ${state.secret}`);
-                        restartGame();
-                    }, 1500);
-                    return;
-                }
-            } else {
-                alert('Invalid Word!');
-            }
-        }
-    } else if (key === 'backspace') {
-        if (state.currentCol > 0) {
-            removeLetter();
-        }
-    } else if (isLetter(key)) {
-        addLetter(key);
-    }
-
-    updateGrid();
-}
-
-// 실제 키보드 입력 이벤트
 function registerKeyboardEvents() {
     document.body.onkeydown = (e) => {
+        if (!state.gameStarted) return;
+        
         const key = e.key.toLowerCase();
-        handleKeyPress(key);
+
+        if (key === 'enter') {
+            if (state.currentCol === 5) {
+                const word = getCurrentWord();
+                if (isWordValid(word)) {
+                    revealWord(word);
+                    state.currentRow++;
+                    state.currentCol = 0;
+
+                    if (word === state.secret) {
+                        setTimeout(() => {
+                            alert('Congratulations!');
+                            restartGame();
+                            // 정답일 경우 재시작
+                        }, 1500);
+                        return;
+                    }
+
+                    if (state.currentRow === 6) {
+                        setTimeout(() => {
+                            alert(`Try again! The word was ${state.secret}`);
+                            restartGame();
+                            // 6번 시도 후 실패 시 재시작 
+                        }, 1500);
+                        return;
+                    }
+                } else {
+                    alert('Invalid Word!');
+                }
+            }
+        } else if (key === 'backspace') {
+            if (state.currentCol > 0) {  
+                removeLetter();
+            }
+        } else if (isLetter(key)) {
+            addLetter(key);
+        }
+
+        updateGrid();
     };
 }
 
-// 가상 키보드 입력 이벤트
 function registerVirtualKeyboardEvents() {
     document.querySelectorAll('.key').forEach(button => {
         button.addEventListener('click', () => {
+            if (!state.gameStarted) return;
+            
             const key = button.getAttribute('data-key');
-            handleKeyPress(key);
+
+            if (key === 'enter') {
+                if (state.currentCol === 5) {
+                    const word = getCurrentWord();
+                    if (isWordValid(word)) {
+                        revealWord(word);
+                        state.currentRow++;
+                        state.currentCol = 0;
+
+                        if (word === state.secret) {
+                            setTimeout(() => {
+                                alert('Congratulations!');
+                                restartGame();
+                            }, 1500);
+                            return;
+                        }
+
+                        if (state.currentRow === 6) {
+                            setTimeout(() => {
+                                alert(`Try again! The word was ${state.secret}`);
+                                restartGame();
+                            }, 1500);
+                            return;
+                        }
+                    } else {
+                        alert('Invalid Word!');
+                    }
+                }
+            } else if (key === 'backspace') {
+                if (state.currentCol > 0) {  
+                    removeLetter();
+                }
+            } else if (isLetter(key)) {
+                addLetter(key);
+            }
+
+            updateGrid();
         });
     });
 }
-
 
 
 function getCurrentWord() {
