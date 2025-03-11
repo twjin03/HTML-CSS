@@ -100,6 +100,8 @@ function registerKeyboardEvents() {
                 } else {
                     alert('Invalid Word!');
                 }
+            } else{
+                alert('Not enough letters');
             }
         } else if (key === 'backspace') {
             if (state.currentCol > 0) {  
@@ -146,6 +148,8 @@ function registerVirtualKeyboardEvents() {
                     } else {
                         alert('Invalid Word!');
                     }
+                } else{
+                    alert('Not enough letters.')
                 }
             } else if (key === 'backspace') {
                 if (state.currentCol > 0) {  
