@@ -121,10 +121,6 @@ body {
     box-shadow: none;
 }
 
-.special-key {
-    width: 80px;
-}
-
 .key:hover {
     background: #666;
 }
@@ -140,6 +136,11 @@ body {
 
 .key.right {
     background: var(--right);
+}
+
+
+.special-key {
+    width: 80px;
 }
 
 #button-container {
