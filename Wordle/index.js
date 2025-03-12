@@ -1,21 +1,23 @@
-import { dictionary } from "./words.js"; // 5자리 단어 import
+import { dictionary } from "./words.js"; // 5자리 정답 단어 목록 import
 
 const state = {
-    secret: "",
-    grid: [],
-    currentRow: 0,
-    currentCol: 0,
-    gameStarted: false
+    secret: "", // 정답 단어
+    grid: [], // 5x6 격자(word grid)
+    currentRow: 0, // 현재 입력 중인 row index
+    currentCol: 0, // 현재 입력 중인 col index
+    gameStarted: false // 게임 시작 여부를 나타냄
 };
 
+// 게임 초기 상태를 설정
 function initState() {
-    state.secret = dictionary[Math.floor(Math.random() * dictionary.length)];
+    state.secret = dictionary[Math.floor(Math.random() * dictionary.length)]; // 무작위 선택
     state.grid = Array.from({ length: 6 }, () => Array(5).fill(''));
     state.currentRow = 0;
     state.currentCol = 0;
     state.gameStarted = true;
 }
 
+// 게임 화면에 5x6 격자 생성
 function drawGrid() {
     const container = document.getElementById("game");
     container.innerHTML = "";
@@ -33,6 +35,7 @@ function drawGrid() {
     }
 }
 
+// 각 box의 내용을 업데이트
 function updateGrid() {
     state.grid.forEach((row, i) => {
         row.forEach((letter, j) => {
@@ -41,6 +44,7 @@ function updateGrid() {
     });
 }
 
+// 키보드 색상 업데이트 
 function updateKeyboardColors() {
     document.querySelectorAll(".key").forEach(key => key.classList.remove("right", "wrong", "empty"));
     const guessedLetters = {};
@@ -51,18 +55,19 @@ function updateKeyboardColors() {
             if (!key) return;
 
             if (state.secret[j] === letter) {
-                key.classList.add("right");
+                key.classList.add("right"); // 💚
                 guessedLetters[letter] = "right";
             } else if (state.secret.includes(letter) && guessedLetters[letter] !== "right") {
-                key.classList.add("wrong");
+                key.classList.add("wrong"); // 💛
                 guessedLetters[letter] = "wrong";
             } else {
-                key.classList.add("empty");
+                key.classList.add("empty"); // 🩶
             }
         });
     }
 }
 
+// dialog popup 표시 
 function showFloatingDialog(message, dialog_duration) {
     const container = document.getElementById("floating-dialog-container");
     const dialog = document.createElement("div");
@@ -77,11 +82,11 @@ function showFloatingDialog(message, dialog_duration) {
     }, dialog_duration);
 }
 
+// 키보드 입력 처리 
 function handleInput(key) {
     if (!state.gameStarted) return;
 
-    // 단축키 사용 시 무시 
-    if (event && (event.ctrlKey || event.altKey || event.metaKey)) return;
+    if (event && (event.ctrlKey || event.altKey || event.metaKey)) return; // 단축키 사용 시 입력 무시 
 
     if (key === "enter") {
         if (state.currentCol === 5) checkWord();
@@ -97,6 +102,7 @@ function handleInput(key) {
     updateGrid();
 }
 
+// shake 애니메이션 사용
 function triggerRowShake(rowIndex) {
     const rowTiles = document.querySelectorAll(`[id^="box${rowIndex}"]`); 
 
@@ -111,10 +117,7 @@ function triggerRowShake(rowIndex) {
     }, 300); 
 }
 
-
-
-
-
+// jump 애니메이션 사용
 function triggerRowJump(rowIndex) {
     const delay = 40;
 
@@ -128,8 +131,7 @@ function triggerRowJump(rowIndex) {
     }
 }
 
-
-
+// 단어 유효성 검사 및 정답 여부 확인
 function checkWord() {
     const word = state.grid[state.currentRow].join("");
     if (!dictionary.includes(word)) {
@@ -160,6 +162,7 @@ function checkWord() {
 
 }
 
+// 입력 결과 표시 + flip 애니메이션 
 function revealWord() {
     const row = state.currentRow;
     const animation_duration = 500;
@@ -170,11 +173,11 @@ function revealWord() {
 
         setTimeout(() => {
             if (letter === state.secret[i]) {
-                box.classList.add('right');
+                box.classList.add('right'); // 💚
             } else if (state.secret.includes(letter)) {
-                box.classList.add('wrong');
+                box.classList.add('wrong'); // 💛
             } else {
-                box.classList.add('empty');
+                box.classList.add('empty'); // 🩶
             }
             updateKeyboardColors();
         }, ((i + 1) * animation_duration) / 2);
@@ -184,10 +187,12 @@ function revealWord() {
     }
 }
 
+// 입력된 키 유효성 검사 
 function isLetter(key) {
     return key.length === 1 && key.match(/[a-z]/i);
 }
 
+// box에 입력 키 표시 + pop 애니메이션 
 function addLetter(letter) {
     if (state.currentCol === 5) return;
     state.grid[state.currentRow][state.currentCol] = letter;
@@ -202,15 +207,17 @@ function addLetter(letter) {
     state.currentCol++;
 }
 
+// 입력한 글자를 지움
 function removeLetter() {
     if (state.currentCol === 0) return;
     state.currentCol--;
     state.grid[state.currentRow][state.currentCol] = '';
 }
 
+// 키보드 이벤트 등록
 function registerEvents() {
     document.body.onkeydown = (e) => {
-        // 단축키 
+        // 단축키 사용 시 입력 무시
         if (e.ctrlKey || e.metaKey || e.altKey) return;
 
         handleInput(e.key.toLowerCase(), e);
@@ -221,10 +228,12 @@ function registerEvents() {
     document.getElementById("start-btn").addEventListener("mousedown", startGame);
 }
 
+// 키보드 색상 초기화 
 function resetKeyboard() {
     document.querySelectorAll(".key").forEach(key => key.classList.remove("right", "wrong", "empty"));
 }
 
+// 게임 시작 시 호출 
 function startGame() {
     initState();
     drawGrid();
