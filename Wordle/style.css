@@ -232,3 +232,29 @@ button:disabled {
     0% { opacity: 1; transform: translateY(0); }
     100% { opacity: 0; transform: translateY(-10px); }
 }
+
+
+@media (max-width: 450px) {
+    .box {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+
+    .key {
+        width: 24px;
+        height: 32px;
+        font-size: 12px;
+        margin: 2px;
+        border-radius: 4px;
+    }
+
+    .special-key {
+        width: 50px;
+    }
+
+    button {
+        font-size: 0.9rem;
+        padding: 6px 12px;
+    }
+}
